@@ -1,0 +1,137 @@
+import logging
+import os
+
+import yaml
+from kubernetes import client, config, utils
+
+logger = logging.getLogger(__name__)
+
+SERVING_TEMPLATE = os.path.join(os.path.dirname(__file__), "serving-template.yml")
+
+
+class FalcoServingKube:
+    def __init__(
+        self,
+        name,
+        template=None,
+        image=None,
+        replicas=1,
+        port=8501,
+        namespace="default",
+    ):
+        self.name = name
+        self.template = template
+        self.image = image
+        self.replicas = replicas
+        self.port = port
+        self.namespace = namespace
+
+        if not self.name:
+            raise RuntimeError("name should not be empty")
+
+        self.template = list(self._get_deployment_template())
+        config.load_kube_config()
+
+    def _get_deployment_template(self):
+        if not self.template:
+            with open(SERVING_TEMPLATE) as f:
+                template = self._fill_deployment_template(f.read())
+                template = yaml.safe_load_all(template)
+
+        elif isinstance(self.template, str):
+            with open(self.template) as f:
+                template = yaml.safe_load_all(f)
+
+        else:
+            raise NotImplementedError(
+                f"parsing template of type {type(self.template)} is not implemented yet"
+            )
+
+        return template
+
+    def _fill_deployment_template(self, template):
+        template = template.replace("$appname", self.name)
+        template = template.replace("$replicas", str(self.replicas))
+        template = template.replace("$port", str(self.port))
+        if not self.image:
+            self.image = f"{self.name}:latest"
+        template = template.replace("$image", self.image)
+
+        return template
+
+    def start(self):
+        k8s_client = client.ApiClient()
+        yaml_objects = self.template
+        for data in yaml_objects:
+            try:
+                utils.create_from_dict(
+                    k8s_client, data=data, namespace=self.namespace, verbose=True
+                )
+            except utils.FailToCreateError as e:
+                logger.debug(e)
+
+    def delete_deployment(self):
+        api = client.AppsV1Api()
+        try:
+            api.delete_namespaced_deployment(
+                name=self.name,
+                namespace=self.namespace,
+                body=client.V1DeleteOptions(
+                    propagation_policy="Foreground", grace_period_seconds=5
+                ),
+            )
+            logger.info(f"deployment `{self.name}` deleted.")
+        except client.exceptions.ApiException as e:
+            if e.reason == "Not Found":
+                logger.debug(f"Deployment {self.name} has been deleted already.")
+
+    def delete_service(self):
+        api = client.CoreV1Api()
+        try:
+            api.delete_namespaced_service(
+                name=self.name,
+                namespace=self.namespace,
+                body=client.V1DeleteOptions(
+                    propagation_policy="Foreground", grace_period_seconds=5
+                ),
+            )
+            logger.info(f"deployment `{self.name}` deleted.")
+        except client.exceptions.ApiException as e:
+            if e.reason == "Not Found":
+                logger.debug(f"Deployment {self.name} has been deleted already.")
+
+    def deployment_exists(self):
+        v1 = client.AppsV1Api()
+        resp = v1.list_namespaced_deployment(namespace=self.namespace)
+        for i in resp.items:
+            if i.metadata.name == self.name:
+                return True
+        return False
+
+    def service_exists(self):
+        v1 = client.CoreV1Api()
+        resp = v1.list_namespaced_service(namespace=self.namespace)
+        for i in resp.items:
+            if i.metadata.name == self.name:
+                return True
+        return False
+
+    def is_running(self):
+        if self.deployment_exists() and self.service_exists():
+            return True
+        return False
+
+    def get_service_address(self):
+        if not self.is_running():
+            logger.error(f"No running deployment found for {self.name}.")
+            return None
+
+        v1 = client.CoreV1Api()
+        service = v1.read_namespaced_service(namespace=self.namespace, name=self.name)
+        [port] = [port.port for port in service.spec.ports]
+        host = service.spec.cluster_ip
+
+        return f"{host}:{port}"
+
+    def scale(self, n):
+        pass

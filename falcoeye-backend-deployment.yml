@@ -44,7 +44,7 @@ spec:
                 name: postgres-credentials
           - name: DATABASE_URL
             value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(FLASK_APP)
-        image: falcoeye-backend:0.0.1
+        image: falcoeye-backend:latest
         imagePullPolicy: IfNotPresent
         name: falcoeye-backend
         resources: {}
@@ -55,4 +55,3 @@ spec:
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
-
