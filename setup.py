@@ -1,5 +1,4 @@
 import os
-import re
 
 import setuptools
 from setuptools import find_packages
@@ -21,7 +20,7 @@ except ImportError:
     print("Cannot import bdist_wheel, upgrade wheel package")
     bdist_wheel = None
 
-package = f"falcoeye_kubernetes"
+package = "falcoeye_kubernetes"
 packages = [f"{package}"] + [f"{package}.{p}" for p in find_packages(f"../{package}")]
 
 setuptools.setup(
