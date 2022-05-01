@@ -1,33 +1,22 @@
+import json
 import logging
 import os
 
 import yaml
 from kubernetes import client, config, utils
-import json
 
 logger = logging.getLogger(__name__)
 
 SERVING_TEMPLATE = os.path.join(os.path.dirname(__file__), "serving-template.yml")
 
+
 def skip_if_already_exists(e):
     info = json.loads(e.api_exceptions[0].body)
-    if info.get('reason').lower() == 'alreadyexists':
+    if info.get("reason").lower() == "alreadyexists":
         return True
     else:
         logger.debug(e)
         return False
-
-
-
-import logging
-import os
-
-import yaml
-from kubernetes import client, config, utils
-
-logger = logging.getLogger(__name__)
-
-SERVING_TEMPLATE = os.path.join(os.path.dirname(__file__), "serving-template.yml")
 
 
 class FalcoServingKube:
@@ -91,7 +80,6 @@ class FalcoServingKube:
                 return True
             except utils.FailToCreateError as e:
                 return skip_if_already_exists(e)
-                
 
     def delete_deployment(self):
         api = client.AppsV1Api()
