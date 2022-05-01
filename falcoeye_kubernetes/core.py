@@ -121,7 +121,7 @@ class FalcoServingKube:
             return True
         return False
 
-    def get_service_address(self):
+    def get_service_address(self, external=False, hostname=False):
         if not self.is_running():
             logger.error(f"No running deployment found for {self.name}.")
             return None
@@ -129,7 +129,13 @@ class FalcoServingKube:
         v1 = client.CoreV1Api()
         service = v1.read_namespaced_service(namespace=self.namespace, name=self.name)
         [port] = [port.port for port in service.spec.ports]
-        host = service.spec.cluster_ip
+        if external:
+            if hostname:
+                host = service.status.load_balancer.ingress[0].hostname
+            else:
+                host = service.status.load_balancer.ingress[0].ip
+        else:
+            host = service.spec.cluster_ip
 
         return f"{host}:{port}"
 
