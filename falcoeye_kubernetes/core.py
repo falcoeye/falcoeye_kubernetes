@@ -77,9 +77,11 @@ class FalcoServingKube:
                 utils.create_from_dict(
                     k8s_client, data=data, namespace=self.namespace, verbose=True
                 )
-                return True
+
             except utils.FailToCreateError as e:
                 return skip_if_already_exists(e)
+
+        return True
 
     def delete_deployment(self):
         api = client.AppsV1Api()
