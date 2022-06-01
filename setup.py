@@ -64,9 +64,7 @@ setup(
     author=AUTHOR,
     url=URL,
     packages=find_packages(exclude=["tests"]),
-    package_data={
-        f"{NAME}/resources": ["*"],
-    },
+    include_package_data=True,
     install_requires=REQUIRED,
     license="MIT",
     keywords="falcoeye",

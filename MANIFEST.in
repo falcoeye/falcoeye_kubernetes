@@ -1,1 +1,1 @@
-include falcoeye_kubernetes/resources/*
+recursive-include falcoeye_kubernetes/resources *
