@@ -65,7 +65,7 @@ setup(
     url=URL,
     packages=find_packages(exclude=["tests"]),
     package_data={
-        "resources": ["*"],
+        f"{NAME}/resources": ["*"],
     },
     install_requires=REQUIRED,
     license="MIT",
