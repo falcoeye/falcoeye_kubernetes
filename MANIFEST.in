@@ -1,2 +1,1 @@
-include *.yml
-include *.yaml
+include resources/*
