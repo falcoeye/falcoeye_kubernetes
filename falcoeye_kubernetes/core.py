@@ -142,6 +142,7 @@ class FalcoServingKube:
         v1 = client.CoreV1Api()
         service = v1.read_namespaced_service(namespace=self.namespace, name=self.name)
         [port] = [port.port for port in service.spec.ports]
+        
         if external:
             if hostname:
                 host = service.status.load_balancer.ingress[0].hostname

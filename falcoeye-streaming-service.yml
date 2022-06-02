@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: falcoeye-streaming
+  labels:
+    service: falcoeye-streaming
+spec:
+  selector:
+    app: falcoeye-streaming
+  ports:
+  - port: 5000
+    targetPort: 5000
