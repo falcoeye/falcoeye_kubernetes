@@ -7,7 +7,9 @@ from kubernetes import client, config, utils
 
 logger = logging.getLogger(__name__)
 
-SERVING_TEMPLATE = os.path.join(os.path.dirname(__file__), "serving-template.yml")
+SERVING_TEMPLATE = os.path.join(
+    os.path.dirname(__file__), "resources/serving-template.yml"
+)
 
 
 def skip_if_already_exists(e):
