@@ -28,6 +28,10 @@ spec:
     spec:
       containers:
       - env:
+          - name: STREAMING_HOST
+            value: http://0.0.0.0:6000
+          - name: WORKFLOW_HOST
+            value: http://0.0.0.0:7000
           - name: FLASK_CONFIG
             value: development
           - name: FLASK_APP
