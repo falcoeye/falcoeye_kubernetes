@@ -29,9 +29,9 @@ spec:
       containers:
       - env:
           - name: STREAMING_HOST
-            value: http://0.0.0.0:6000
+            value: http://localhost:6000
           - name: WORKFLOW_HOST
-            value: http://0.0.0.0:7000
+            value: http://localhost:7000
           - name: FLASK_CONFIG
             value: development
           - name: FLASK_APP
@@ -48,6 +48,27 @@ spec:
                 name: postgres-credentials
           - name: DATABASE_URL
             value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(FLASK_APP)
+          - name: STREAMING_USER
+            valueFrom:
+              secretKeyRef:
+                key: user
+                name: streaming-credentials
+          - name: STREAMING_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: streaming-credentials
+          - name: WORKFLOW_USER
+            valueFrom:
+              secretKeyRef:
+                key: user
+                name: workflow-credentials
+          - name: WORKFLOW_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: workflow-credentials
+
         image: falcoeye-backend:latest
         imagePullPolicy: IfNotPresent
         name: falcoeye-backend
