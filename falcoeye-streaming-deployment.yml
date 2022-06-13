@@ -32,6 +32,17 @@ spec:
             value: development
           - name: FLASK_APP
             value: falcoeye
+          - name: STREAMING_USER
+            valueFrom:
+              secretKeyRef:
+                key: user
+                name: streaming-credentials
+          - name: STREAMING_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: streaming-credentials
+          
         image: falcoeye-streaming:latest
         imagePullPolicy: IfNotPresent
         name: falcoeye-streaming
