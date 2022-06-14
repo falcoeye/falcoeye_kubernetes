@@ -49,8 +49,17 @@ spec:
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
+      
+      volumMeounts:
+        - mountPath: /falcoeye-temp/data/
+          name: falcoeye-volume-mount
+      
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+      volumes:
+        - name: falcoeye-volume-mount
+          persistentVolumeClaim:
+            claimName: falcoeye-temp-pvc

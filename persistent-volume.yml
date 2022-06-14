@@ -12,4 +12,34 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/data/postgres-pv"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: falcoeye-temp-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 1Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/falcoeye-temp-pv"
 
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: falcoeye-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 2Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/falcoeye-pv"

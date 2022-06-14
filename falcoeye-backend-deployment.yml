@@ -27,56 +27,67 @@ spec:
         app: falcoeye-backend
     spec:
       containers:
-      - env:
-          - name: STREAMING_HOST
-            value: http://localhost:6000
-          - name: WORKFLOW_HOST
-            value: http://localhost:7000
-          - name: FLASK_CONFIG
-            value: development
-          - name: FLASK_APP
-            value: falcoeye
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                key: user
-                name: postgres-credentials
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: password
-                name: postgres-credentials
-          - name: DATABASE_URL
-            value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(FLASK_APP)
-          - name: STREAMING_USER
-            valueFrom:
-              secretKeyRef:
-                key: user
-                name: streaming-credentials
-          - name: STREAMING_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: password
-                name: streaming-credentials
-          - name: WORKFLOW_USER
-            valueFrom:
-              secretKeyRef:
-                key: user
-                name: workflow-credentials
-          - name: WORKFLOW_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: password
-                name: workflow-credentials
-
-        image: falcoeye-backend:latest
-        imagePullPolicy: IfNotPresent
-        name: falcoeye-backend
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - name: falcoeye-backend
+          image: falcoeye-backend:latest
+          imagePullPolicy: IfNotPresent
+          env:  
+              - name: STREAMING_HOST
+                value: http://localhost:6000
+              - name: WORKFLOW_HOST
+                value: http://localhost:7000
+              - name: FLASK_CONFIG
+                value: development
+              - name: FLASK_APP
+                value: falcoeye
+              - name: POSTGRES_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: user
+                    name: postgres-credentials
+              - name: POSTGRES_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: postgres-credentials
+              - name: DATABASE_URL
+                value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(FLASK_APP)
+              - name: STREAMING_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: user
+                    name: streaming-credentials
+              - name: STREAMING_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: streaming-credentials
+              - name: WORKFLOW_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: user
+                    name: workflow-credentials
+              - name: WORKFLOW_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: workflow-credentials
+          volumeMounts:
+            - mountPath: /falcoeye-temp/data/
+              name: falcoeye-temp-volume-mount
+            - mountPath: /falcoeye/data/
+              name: falcoeye-volume-mount
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+      volumes:
+        - name: falcoeye-volume-mount
+          persistentVolumeClaim:
+            claimName: falcoeye-pvc    
+        - name: falcoeye-temp-volume-mount
+          persistentVolumeClaim:
+            claimName: falcoeye-temp-pvc
