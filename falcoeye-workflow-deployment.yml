@@ -27,19 +27,36 @@ spec:
         app: falcoeye-workflow
     spec:
       containers:
-      - env:
-          - name: FLASK_CONFIG
-            value: development
-          - name: FLASK_APP
-            value: falcoeye
-        image: falcoeye-workflow:latest
-        imagePullPolicy: IfNotPresent
-        name: falcoeye-workflow
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+          - name: falcoeye-workflow
+            image: falcoeye-workflow:latest
+            imagePullPolicy: IfNotPresent
+            env:
+                - name: FLASK_CONFIG
+                  value: development
+                - name: FLASK_APP
+                  value: falcoeye
+                - name: WORKFLOW_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: user
+                      name: workflow-credentials
+                - name: WORKFLOW_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: workflow-credentials
+            volumeMounts:
+              - mountPath: /falcoeye/data/
+                name: falcoeye-volume-mount
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+      volumes:
+        - name: falcoeye-volume-mount
+          persistentVolumeClaim:
+            claimName: falcoeye-pvc
