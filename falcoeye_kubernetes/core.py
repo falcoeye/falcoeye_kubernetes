@@ -42,7 +42,10 @@ class FalcoServingKube:
             raise RuntimeError("name should not be empty")
 
         self.template = list(self._get_deployment_template())
-        config.load_kube_config()
+        try:
+            config.load_kube_config()
+        except:
+            config.load_incluster_config()
 
     def _get_deployment_template(self):
         if not self.template:

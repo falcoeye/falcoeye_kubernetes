@@ -27,19 +27,37 @@ spec:
         app: falcoeye-streaming
     spec:
       containers:
-      - env:
-          - name: FLASK_CONFIG
-            value: development
-          - name: FLASK_APP
-            value: falcoeye
-        image: falcoeye-streaming:latest
-        imagePullPolicy: IfNotPresent
-        name: falcoeye-streaming
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - name: falcoeye-streaming
+          image: falcoeye-streaming:latest
+          imagePullPolicy: IfNotPresent
+          env:
+              - name: FLASK_CONFIG
+                value: development
+              - name: FLASK_APP
+                value: falcoeye
+              - name: STREAMING_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: user
+                    name: streaming-credentials
+              - name: STREAMING_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: streaming-credentials
+          volumeMounts:
+            - mountPath: /falcoeye-temp/data/
+              name: falcoeye-volume-mount
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+      volumes:
+        - name: falcoeye-volume-mount
+          persistentVolumeClaim:
+            claimName: falcoeye-temp-pvc
