@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: falcoeye-pvc
+  name: user-assets-pvc
   labels:
     type: local
 spec:
@@ -40,5 +40,20 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  volumeName: falcoeye-pv
+  volumeName: user-assets-pv
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: falcoeye-assets-pvc
+  labels:
+    type: local
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+  volumeName: falcoeye-assets-pv
   storageClassName: standard

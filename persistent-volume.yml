@@ -32,7 +32,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: falcoeye-pv
+  name: user-assets-pv
   labels:
     type: local
 spec:
@@ -42,4 +42,19 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/data/falcoeye-pv"
+    path: "/data/user-assets-pv"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: falcoeye-assets-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Mi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/falcoeye-assets"
