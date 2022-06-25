@@ -45,6 +45,9 @@ spec:
                   secretKeyRef:
                     key: password
                     name: streaming-credentials
+              - name: TEMPORARY_DATA_PATH
+                value: /falcoeye-temp/data/
+                
           volumeMounts:
             - mountPath: /falcoeye-temp/data/
               name: falcoeye-volume-mount
