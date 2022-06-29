@@ -72,15 +72,15 @@ spec:
                     key: password
                     name: workflow-credentials
               - name: TEMPORARY_DATA_PATH
-                value: /falcoeye-temp/data/
+                value: /falcoeye-temp/
               - name: FALCOEYE_ASSETS
                 value: /falcoeye-assets/
               - name: USER_ASSETS
-                value: /user-assets/data/
+                value: /user-assets/
           volumeMounts:
-            - mountPath: /falcoeye-temp/data/
+            - mountPath: /falcoeye-temp/
               name: falcoeye-temp-volume-mount
-            - mountPath: /user-assets/data/
+            - mountPath: /user-assets/
               name: user-assets-volume-mount
             - mountPath: /falcoeye-assets/
               name: falcoeye-assets-volume-mount
