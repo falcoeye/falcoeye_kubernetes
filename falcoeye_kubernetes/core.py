@@ -32,6 +32,7 @@ class FalcoServingKube:
         namespace="default",
     ):
         self.name = name
+        self.service_name = self.name+"-svc"
         self.template = template
         self.image = image
         self.replicas = replicas
@@ -149,6 +150,7 @@ class FalcoServingKube:
         [port] = [port.port for port in service.spec.ports]
         
         if external:
+            service = v1.read_namespaced_service(namespace=self.namespace, name=self.service_name)
             if hostname:
                 host = service.status.load_balancer.ingress[0].hostname
             else:
