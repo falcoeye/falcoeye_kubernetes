@@ -32,10 +32,7 @@ class FalcoServingKube:
         port=8501,
         namespace="default",
     ):
-        if FalcoServingKube.ARTIFACT_REGISTRY:
-            self.name = f"{ARTIFACT_REGISTRY}/{name}"
-        else:
-            self.name = name
+        self.name = name
         self.service_name = self.name+"-svc"
         self.base_name = name.split("/")[-1]
         self.template = template
@@ -74,9 +71,16 @@ class FalcoServingKube:
         template = template.replace("$appname", self.name)
         template = template.replace("$replicas", str(self.replicas))
         template = template.replace("$port", str(self.port))
-        if not self.image:
-            self.image = f"{self.name}:latest"
-        template = template.replace("$image", self.image)
+        
+        # @jalalirs: create it if None but don't set it (i.e. self.image=...)
+        # I don't like setting object attributes inside operation functions
+        image = self.image
+        if not image:
+            image = f"{self.name}:latest"
+            if FalcoServingKube.ARTIFACT_REGISTRY:
+                image = f"{FalcoServingKube.ARTIFACT_REGISTRY}/{image}"
+        
+        template = template.replace("$image", image)
 
         return template
 
