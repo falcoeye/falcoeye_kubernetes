@@ -22,6 +22,7 @@ def skip_if_already_exists(e):
 
 
 class FalcoServingKube:
+    ARTIFACT_REGISTRY = None
     def __init__(
         self,
         name,
@@ -31,8 +32,12 @@ class FalcoServingKube:
         port=8501,
         namespace="default",
     ):
-        self.name = name
+        if FalcoServingKube.ARTIFACT_REGISTRY:
+            self.name = f"{ARTIFACT_REGISTRY}/{name}"
+        else:
+            self.name = name
         self.service_name = self.name+"-svc"
+        self.base_name = name.split("/")[-1]
         self.template = template
         self.image = image
         self.replicas = replicas
@@ -159,6 +164,12 @@ class FalcoServingKube:
             host = service.spec.cluster_ip
 
         return f"{host}:{port}"
+
+    @staticmethod
+    def set_artifact_registry(registry):
+        if registry[-1] == "/":
+            registry = registry[:-1]
+        FalcoServingKube.ARTIFACT_REGISTRY = registry
 
     def scale(self, n):
         pass
