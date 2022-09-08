@@ -46,10 +46,11 @@ spec:
                     key: password
                     name: streaming-credentials
               - name: TEMPORARY_DATA_PATH
-                value: /falcoeye-temp/data/
-                
+                value: /falcoeye-temp/
+              - name: DEPLOYMENT
+                value: k8s  
           volumeMounts:
-            - mountPath: /falcoeye-temp/data/
+            - mountPath: /falcoeye-temp/
               name: falcoeye-volume-mount
           resources: {}
           terminationMessagePath: /dev/termination-log

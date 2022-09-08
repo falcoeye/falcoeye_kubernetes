@@ -47,6 +47,8 @@ spec:
                       name: workflow-credentials
                 - name: USER_ASSETS
                   value: /user-assets/data/
+                - name: DEPLOYMENT
+                  value: k8s  
             volumeMounts:
               - mountPath: /user-assets/
                 name: user-assets-volume-mount

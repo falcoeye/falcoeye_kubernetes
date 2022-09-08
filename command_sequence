@@ -1,0 +1,46 @@
+kuber
+kubectl apply -f default-cluster-role.yml
+kubectl create clusterrolebinding pod-admin-binding --clusterrole=pod-admin --serviceaccount=default:default
+kubectl create clusterrole deployment-role --verb=\* --resource=deployments,nodes
+kubectl create clusterrolebinding deployment-role-binding --clusterrole=deployment-role --serviceaccount=default:default
+
+from app.artifact.k8s.core import FalcoServingKube
+a.get_service_address()
+a = FalcoServingKube("falcoeye-backend")
+a.get_service_address()
+b = a.get_logs()
+
+
+
+kubectl auth can-i list pods --as=system:serviceaccount:default:default -n default
+kubectl auth can-i list deployments --as=system:serviceaccount:default:default -n default
+kubectl auth can-i list deployments --as=system:serviceaccount:default:default -n default
+
+kubectl apply -f secret.yml 
+kubectl apply -f persistent-volume.yml 
+kubectl apply -f persistent-volume-claim.yml 
+kubectl apply -f postgres-deployment.yml 
+kubectl apply -f postgres-service.yml
+
+kubectl exec `kubectl get pods|grep postgres | awk '{print $1}'` --stdin --tty -- createdb -U sample falcoeye
+kubectl apply -f falcoeye-backend-deployment.yml
+kubectl apply -f falcoeye-backend-service.yml
+kubectl expose deployment falcoeye-backend --type=LoadBalancer --name=falcoeye-backend-svc --port=8000
+kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db init
+kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db migrate
+kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db upgrade
+kubectl scale deployment falcoeye-backend --replicas=0
+kubectl scale deployment falcoeye-backend --replicas=1
+kubectl exec `pods | grep backend | grep Running | awk  '{print $1}'` --stdin --tty -- bash
+//login to the pod
+//insert roles
+//register accounts
+export WORKFLOW_USER=workflow@falcoeye.io
+export WORKFLOW_PASSWORD=LIFE_IS_BUSY
+//add workflows
+kubectl apply -f falcoeye-streaming-deployment.yml
+kubectl apply -f falcoeye-streaming-service.yml
+kubectl expose deployment falcoeye-streaming --type=LoadBalancer --name=falcoeye-streaming-svc --port=6000
+kubectl apply -f falcoeye-workflow-deployment.yml
+kubectl apply -f falcoeye-workflow-service.yml
+kubectl expose deployment falcoeye-workflow --type=LoadBalancer --name=falcoeye-workflow-svc --port=7000

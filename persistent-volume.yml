@@ -27,7 +27,6 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/data/falcoeye-temp-pv"
-
 ---
 apiVersion: v1
 kind: PersistentVolume

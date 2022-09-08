@@ -77,6 +77,14 @@ spec:
                 value: /falcoeye-assets/
               - name: USER_ASSETS
                 value: /user-assets/
+              - name: DEPLOYMENT
+                value: k8s
+              - name: SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    key: 'value'
+                    name: secret-key
+
           volumeMounts:
             - mountPath: /falcoeye-temp/
               name: falcoeye-temp-volume-mount
