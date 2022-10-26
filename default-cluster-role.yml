@@ -4,7 +4,7 @@ metadata:
   name: deployment-role
   namespace: default
 ---          
-kind: Role
+kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: default
@@ -21,9 +21,9 @@ metadata:
   namespace: default
 subjects:
 - kind: ServiceAccount
-  name: deployment-role
+  name: deployment-role # Name is case sensitive
   apiGroup: ""
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: pod-admin
   apiGroup: ""

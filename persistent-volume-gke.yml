@@ -1,0 +1,51 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: postgres-pv
+provisioner: kubernetes.io/gce-pd
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+parameters:
+    type: pd-standard
+    fstype:	ext4
+    replication-type: none
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: falcoeye-temp-pv
+provisioner: kubernetes.io/gce-pd
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+parameters:
+    type: pd-standard
+    fstype:	ext4
+    replication-type: none
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: user-assets-pv
+provisioner: kubernetes.io/gce-pd
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+parameters:
+    type: pd-standard
+    fstype:	ext4
+    replication-type: none
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: falcoeye-assets-pv
+provisioner: kubernetes.io/gce-pd
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+parameters:
+    type: pd-standard
+    fstype:	ext4
+    replication-type: none
