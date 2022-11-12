@@ -20,28 +20,26 @@ kubectl apply -f persistent-volume-claim.yml
 kubectl apply -f postgres-deployment.yml 
 kubectl apply -f postgres-service.yml
 
-kubectl exec `kubectl get pods|grep postgres | awk '{print $1}'` --stdin --tty -- createdb -U sample falcoeye
 kubectl apply -f falcoeye-backend-deployment.yml
 kubectl apply -f falcoeye-backend-service.yml
 kubectl expose deployment falcoeye-backend --type=LoadBalancer --name=falcoeye-backend-svc --port=8000
-# you might need to delete migration folder here
+
+kubectl exec `kubectl get pods|grep postgres | awk '{print $1}'` --stdin --tty -- createdb -U sample falcoeye
 kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db init
 kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db migrate
 kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db upgrade
+
+
+
+# you might need to delete migration folder here
 kubectl scale deployment falcoeye-backend --replicas=0
 kubectl scale deployment falcoeye-backend --replicas=1
-kubectl exec `pods | grep backend | grep Running | awk  '{print $1}'` --stdin --tty -- bash
-//login to the pod
-//insert roles
-//register accounts
-export WORKFLOW_USER=workflow@falcoeye.io
-export WORKFLOW_PASSWORD=LIFE_IS_BUSY
-//add workflows
+kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- python initialization/add-roles.py
+kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- python initialization/register-accounts.py
+kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- python initialization/add-workflows.py
 kubectl apply -f falcoeye-streaming-deployment.yml
 kubectl apply -f falcoeye-streaming-service.yml
 kubectl expose deployment falcoeye-streaming --type=LoadBalancer --name=falcoeye-streaming-svc --port=6000
 kubectl apply -f falcoeye-workflow-deployment.yml
 kubectl apply -f falcoeye-workflow-service.yml
 kubectl expose deployment falcoeye-workflow --type=LoadBalancer --name=falcoeye-workflow-svc --port=7000
-
-
