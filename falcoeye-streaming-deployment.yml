@@ -47,11 +47,15 @@ spec:
                     name: streaming-credentials
               - name: TEMPORARY_DATA_PATH
                 value: /falcoeye-temp/
+              - name: USER_ASSETS
+                value: /user-assets/
               - name: DEPLOYMENT
                 value: k8s  
           volumeMounts:
             - mountPath: /falcoeye-temp/
               name: falcoeye-volume-mount
+            - mountPath: /user-assets/
+              name: user-assets-volume-mount
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File   
@@ -61,6 +65,10 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
+        - name: user-assets-volume-mount
+          persistentVolumeClaim:
+            claimName: user-assets-pvc
         - name: falcoeye-volume-mount
           persistentVolumeClaim:
-            claimName: falcoeye-temp-pvc
+            claimName: falcoeye-temp-pvc 
+
