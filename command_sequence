@@ -22,7 +22,10 @@ kubectl expose deployment falcoeye-backend --type=LoadBalancer --name=falcoeye-b
 kubectl exec `kubectl get pods|grep postgres | awk '{print $1}'` --stdin --tty -- dropdb -U sample falcoeye
 kubectl exec `kubectl get pods|grep postgres | awk '{print $1}'` --stdin --tty -- createdb -U sample falcoeye
 kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db init
+# Execute this inside your backend pod
+kubectl exec $(kubectl get pods | grep backend | awk '{print $1}') -- mkdir -p /usr/src/app/migrations/versions
 kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db migrate
+
 kubectl exec `kubectl get pods|grep backend | awk '{print $1}'` --stdin --tty -- flask db upgrade
 
 # you might need to delete migration folder here
@@ -44,7 +47,7 @@ kubectl expose deployment falcoeye-workflow --type=LoadBalancer --name=falcoeye-
 
 backend
 cd initialization
-python add-sources.py
-python add-videos.py
+python3 add-sources.py
+python3 add-videos.py
 
 
